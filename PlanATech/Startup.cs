@@ -112,7 +112,6 @@ namespace PlanATech
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
             IWebHostEnvironment env,
-            ILoggerManager logger,
             IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
@@ -126,7 +125,6 @@ namespace PlanATech
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "PlanATech API V1");
             });
 
-            //app.ConfigureExceptionHandler(logger);
             app.ConfigureCustomExceptionMiddleware();
 
             app.UseRouting();
