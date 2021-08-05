@@ -16,5 +16,6 @@ namespace PlanATech.Models
         {
         }
         public DbSet<PlanATech.Models.Category> Category { get; set; }
+        public DbSet<PlanATech.Models.Product> Product { get; set; }
     }
 }
