@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
 
 namespace PlanATech
 {
@@ -38,7 +39,11 @@ namespace PlanATech
 
             services.ConfigureLoggerService();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
 
             services.AddSwaggerGen(c =>
             {
