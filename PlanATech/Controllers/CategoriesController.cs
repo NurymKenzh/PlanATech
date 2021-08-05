@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LoggerService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace PlanATech.Controllers
         /// </returns>
         // GET: api/Categories
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
             // to show
@@ -55,6 +57,7 @@ namespace PlanATech.Controllers
         /// </returns>
         // GET: api/Categories/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             _logger.LogInfo($"Fetching category with Id = {id}");
@@ -79,6 +82,7 @@ namespace PlanATech.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
             if (id != category.Id)
@@ -119,6 +123,7 @@ namespace PlanATech.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             _logger.LogInfo($"Add category with name = {category.Name}");
@@ -139,6 +144,7 @@ namespace PlanATech.Controllers
         /// </returns>
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
         {
             var category = await _context.Category.FindAsync(id);
