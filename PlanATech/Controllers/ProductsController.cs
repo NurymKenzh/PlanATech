@@ -24,6 +24,12 @@ namespace PlanATech.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <returns>
+        /// Returns all products
+        /// </returns>
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
@@ -37,6 +43,15 @@ namespace PlanATech.Controllers
             return products;
         }
 
+        /// <summary>
+        /// Get one product
+        /// </summary>
+        /// <param name="id">
+        /// Id of the product to be obtained
+        /// </param>
+        /// <returns>
+        /// Product with provided Id
+        /// </returns>
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -53,6 +68,14 @@ namespace PlanATech.Controllers
             return product;
         }
 
+        /// <summary>
+        /// Edit existing product
+        /// </summary>
+        /// <param name="id">
+        /// Id of the product to be changed
+        /// </param>
+        /// <param name="product"></param>
+        /// <returns></returns>
         // PUT: api/Products/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -86,6 +109,13 @@ namespace PlanATech.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Create new product
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns>
+        /// Returns created product
+        /// </returns>
         // POST: api/Products
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -99,6 +129,15 @@ namespace PlanATech.Controllers
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 
+        /// <summary>
+        /// Delete existing product
+        /// </summary>
+        /// <param name="id">
+        /// Id of the product to be deleted
+        /// </param>
+        /// <returns>
+        /// Deleted product
+        /// </returns>
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)

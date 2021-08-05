@@ -24,6 +24,12 @@ namespace PlanATech.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all categories
+        /// </summary>
+        /// <returns>
+        /// Returns all categories
+        /// </returns>
         // GET: api/Categories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
@@ -38,6 +44,15 @@ namespace PlanATech.Controllers
             return categories;
         }
 
+        /// <summary>
+        /// Get one category
+        /// </summary>
+        /// <param name="id">
+        /// Id of the category to be obtained
+        /// </param>
+        /// <returns>
+        /// Category with provided Id
+        /// </returns>
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
@@ -53,6 +68,13 @@ namespace PlanATech.Controllers
             return category;
         }
 
+        /// <summary>
+        /// Edit existing category
+        /// </summary>
+        /// <param name="id">
+        /// Id of the category to be changed
+        /// </param>
+        /// <param name="category"></param>
         // PUT: api/Categories/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -86,6 +108,13 @@ namespace PlanATech.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Create new category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns>
+        /// Returns created category
+        /// </returns>
         // POST: api/Categories
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -99,6 +128,15 @@ namespace PlanATech.Controllers
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
+        /// <summary>
+        /// Delete existing category
+        /// </summary>
+        /// <param name="id">
+        /// Id of the category to be deleted
+        /// </param>
+        /// <returns>
+        /// Deleted category
+        /// </returns>
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
