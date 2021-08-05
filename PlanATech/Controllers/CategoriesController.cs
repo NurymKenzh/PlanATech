@@ -32,13 +32,17 @@ namespace PlanATech.Controllers
             //throw new AccessViolationException("Violation Exception while accessing the resource.");
             // to show
             //throw new Exception("Exception while fetching all categories.");
-            return await _context.Category.ToListAsync(); ;
+            _logger.LogInfo("Fetching all categories");
+            var categories = await _context.Category.ToListAsync();
+            _logger.LogInfo($"Returning {categories.Count} category (-es).");
+            return categories;
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
+            _logger.LogInfo($"Fetching category with Id = {id}");
             var category = await _context.Category.FindAsync(id);
 
             if (category == null)
@@ -60,6 +64,7 @@ namespace PlanATech.Controllers
                 return BadRequest();
             }
 
+            _logger.LogInfo($"Change category with Id = {id}");
             _context.Entry(category).State = EntityState.Modified;
 
             try
@@ -87,6 +92,7 @@ namespace PlanATech.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
+            _logger.LogInfo($"Add category with name = {category.Name}");
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
 
@@ -103,6 +109,7 @@ namespace PlanATech.Controllers
                 return NotFound();
             }
 
+            _logger.LogInfo($"Delete category with Id = {category.Id}");
             _context.Category.Remove(category);
             await _context.SaveChangesAsync();
 
