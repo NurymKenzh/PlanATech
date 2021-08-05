@@ -28,7 +28,11 @@ namespace PlanATech.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            return await _context.Category.ToListAsync();
+            // to show
+            //throw new AccessViolationException("Violation Exception while accessing the resource.");
+            // to show
+            //throw new Exception("Exception while fetching all categories.");
+            return await _context.Category.ToListAsync(); ;
         }
 
         // GET: api/Categories/5
