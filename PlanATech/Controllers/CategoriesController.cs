@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using LoggerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PlanATech.Models;
 
 namespace PlanATech.Controllers
@@ -17,12 +20,15 @@ namespace PlanATech.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILoggerManager _logger;
+        private readonly IConfiguration _configuration;
 
         public CategoriesController(ApplicationDbContext context,
-            ILoggerManager logger)
+            ILoggerManager logger,
+            IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -57,7 +63,7 @@ namespace PlanATech.Controllers
         /// </returns>
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             _logger.LogInfo($"Fetching category with Id = {id}");
@@ -163,6 +169,62 @@ namespace PlanATech.Controllers
         private bool CategoryExists(int id)
         {
             return _context.Category.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Route("UploadCategoryFile")]
+        public async Task<ActionResult<string>> UploadCategoryFile()
+        {
+            var file = Request.Form.Files[0];
+            var multipartContent = new MultipartFormDataContent();
+
+            multipartContent.Add(new StreamContent(file.OpenReadStream()),
+                "File",
+                ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"'));
+
+            using (var form = new MultipartFormDataContent())
+            {
+                form.Add(multipartContent);
+                using (var client = new HttpClient())
+                {
+                    var result = client.PostAsync($"{_configuration.GetValue<string>("UploadFilesService")}Files/UploadCategoryFile", multipartContent).Result;
+                    string message = await result.Content.ReadAsStringAsync();
+
+                    _logger.LogInfo(message);
+
+                    return Ok(new { message });
+                }
+            }
+        }
+
+        //[HttpGet("{id}")]
+        //[Route("GetUploadFileStatus")]
+        //public async Task<ActionResult<Category>> GetUploadFileStatus(int id)
+        //{
+        //    using (var client = new HttpClient())
+        //    {
+        //        var result = client.GetAsync($"{_configuration.GetValue<string>("UploadFilesService")}Files/{id}").Result;
+        //        string message = await result.Content.ReadAsStringAsync();
+
+        //        _logger.LogInfo(message);
+
+        //        return Ok(new { message });
+        //    }
+        //}
+
+        [HttpGet]
+        [Route("GetUploadFileStatus")]
+        public async Task<ActionResult> GetUploadFileStatus(int fileId)
+        {
+            using (var client = new HttpClient())
+            {
+                var result = client.GetAsync($"{_configuration.GetValue<string>("UploadFilesService")}Files/{fileId}").Result;
+                string message = await result.Content.ReadAsStringAsync();
+
+                _logger.LogInfo(message);
+
+                return Ok(new { message });
+            }
         }
     }
 }

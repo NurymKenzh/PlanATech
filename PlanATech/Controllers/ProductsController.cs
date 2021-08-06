@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using LoggerService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PlanATech.Models;
 
 namespace PlanATech.Controllers
@@ -16,12 +19,15 @@ namespace PlanATech.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILoggerManager _logger;
+        private readonly IConfiguration _configuration;
 
         public ProductsController(ApplicationDbContext context,
-            ILoggerManager logger)
+            ILoggerManager logger,
+            IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -158,6 +164,47 @@ namespace PlanATech.Controllers
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Route("UploadProductFile")]
+        public async Task<ActionResult<string>> UploadProductFile(int CategoryId)
+        {
+            var file = Request.Form.Files[0];
+            var multipartContent = new MultipartFormDataContent();
+
+            multipartContent.Add(new StreamContent(file.OpenReadStream()),
+                "File",
+                ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"'));
+
+            using (var form = new MultipartFormDataContent())
+            {
+                form.Add(multipartContent);
+                using (var client = new HttpClient())
+                {
+                    var result = client.PostAsync($"{_configuration.GetValue<string>("UploadFilesService")}Files/UploadProductFile?CategoryId={CategoryId}", multipartContent).Result;
+                    string message = await result.Content.ReadAsStringAsync();
+
+                    _logger.LogInfo(message);
+
+                    return Ok(new { message });
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("GetUploadFileStatus")]
+        public async Task<ActionResult> GetUploadFileStatus(int fileId)
+        {
+            using (var client = new HttpClient())
+            {
+                var result = client.GetAsync($"{_configuration.GetValue<string>("UploadFilesService")}Files/{fileId}").Result;
+                string message = await result.Content.ReadAsStringAsync();
+
+                _logger.LogInfo(message);
+
+                return Ok(new { message });
+            }
         }
     }
 }
